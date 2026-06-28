@@ -358,24 +358,24 @@
   const previewEl=$("preview"), pvFile=$("pvFile"), pvRaw=$("pvRaw"), pvMd=$("pvMd");
   const DRAG_SAMPLES = [
     {
-      name:"standup-log-example.md",
-      text:"# Standup Notes - Jun 24\n\nQuick log from this morning's standup.\n\n- Me: finished the auth refactor, starting on the redesign nav today.\n- Priya: blocked on the API key, pinging infra.\n- Sam: QA on the checkout flow, found two bugs.\n\nNext standup Thursday.\n",
-      expected:"logs/00-inbox/"
-    },
-    {
-      name:"onboarding-draft-example.md",
-      text:"# Onboarding guide (draft)\n\nRough outline for the new-hire onboarding doc:\n1. Day 1 - accounts, tools, intro calls\n2. Week 1 - shadow a teammate, first small task\n3. Week 2 - own a piece end to end\n\nStill need to fill in the tools list and add screenshots.\n\n(Not now: could turn this into a short video series once the written version settles.)\n",
+      name:"onboarding-guide-draft.md",
+      text:"# Onboarding Guide (draft)\n\nFirst pass at the new-user onboarding doc. Still rough.\n- Welcome screen -> what the product does in one line (need a better line)\n- Step 1: connect your data source (screenshots TODO)\n- Step 2: first sort run - show the \"before/after\" piles\n- FAQ section: half-written, come back to this\n\nGoal is to have something shippable by the launch. Not there yet.\n",
       expected:"drafts/00-inbox/"
     },
     {
-      name:"idea-voice-capture-example.md",
-      text:"# Idea: voice input capture\n\nWhat if the app had voice input for quick capture on mobile and desktop?\n\nPotential benefits:\n- Faster note capture during meetings\n- Better accessibility for users who avoid typing\n- Better capture quality when context is still fresh\n\nUnknowns:\n- Accuracy in noisy rooms\n- Privacy expectations for audio\n- Cost of transcription at scale\n\nNot committed yet. Parking this as a someday-maybe idea.\n",
-      expected:"ideas/00-inbox/"
+      name:"interview-prep-questions.md",
+      text:"# Interview prep questions\n\nQuestions to screen candidates for product operations and workflow design:\n\n- Tell me about a time you had to turn vague direction into a repeatable process.\n- What signals tell you a system should be changed instead of patched?\n- How do you decide when to document versus automate?\n- Give an example of a handoff you improved across teams.\n\nNotes:\n- This is for recruiting next month.\n- We do not have a dedicated hiring area yet.\n",
+      expected:"_unsorted/00-inbox/ (propose: hiring)"
     },
     {
-      name:"checkout-outage-postmortem.md",
-      text:"# Postmortem - Checkout Outage, 2026-06-18\n\nStatus: RESOLVED. Writing this up so we do not repeat it next quarter.\n\n## What happened\nCheckout was down for 22 minutes after a bad config push removed a required env var.\n\n## Root cause\nNo validation on the config pipeline; the missing var only failed at request time.\n\n## What we are keeping for next time\n- Add a config schema check in CI (ticket filed).\n- The rollback took too long because nobody knew the runbook - link it in the on-call doc.\n- Re-read this before the next big config change.\n",
-      expected:"reference/00-inbox/"
+      name:"pricing-rewrite.md",
+      text:"# Pricing rewrite\n\nDrafting the new pricing page copy for launch.\n\nCurrent draft sections:\n- Hero: simpler value statement\n- Tier table: Starter / Pro / Team\n- FAQ: billing and annual discount\n\nOpen thought while drafting:\n- maybe add usage-based tiers later if activation continues climbing\n\nThis is still writing-in-progress, not final copy.\n",
+      expected:"drafts/00-inbox/ (note: touches ideas)"
+    },
+    {
+      name:"side-tool-concept.md",
+      text:"# Side tool concept\n\nOriginally parked as an idea last month.\n\nNow in progress:\n- Project repo initialized\n- Basic ingestion pipeline running locally\n- First integration test passing\n\nNext:\n- Add error reporting\n- Ship internal alpha by end of sprint\n\nThis has moved from someday-maybe into active build work.\n",
+      expected:"active-projects/00-inbox/ (note: evolved from ideas)"
     }
   ];
 
@@ -795,16 +795,20 @@
   const tree=$("tree"), demoOut=$("demoOut"), reasonEl=$("reason"), demoMd=$("demoMd"), demoText=$("demoText");
   const TEXT_SAMPLES = [
     {
-      label:"Standup -> logs",
-      text:"# Standup Notes - Jun 24\n\nQuick log from this morning's standup.\n\n- Me: finished the auth refactor, starting on the redesign nav today.\n- Priya: blocked on the API key, pinging infra.\n- Sam: QA on the checkout flow, found two bugs.\n\nNext standup Thursday."
+      label:"Onboarding draft -> drafts",
+      text:"# Onboarding Guide (draft)\n\nFirst pass at the new-user onboarding doc. Still rough.\n- Welcome screen -> what the product does in one line (need a better line)\n- Step 1: connect your data source (screenshots TODO)\n- Step 2: first sort run - show the \"before/after\" piles\n- FAQ section: half-written, come back to this\n\nGoal is to have something shippable by the launch. Not there yet."
     },
     {
-      label:"Draft -> drafts",
-      text:"# Onboarding guide (draft)\n\nRough outline for the new-hire onboarding doc:\n1. Day 1 - accounts, tools, intro calls\n2. Week 1 - shadow a teammate, first small task\n3. Week 2 - own a piece end to end\n\nStill need to fill in the tools list and add screenshots.\n\n(Not now: could turn this into a short video series once the written version settles.)"
+      label:"No-fit interview -> _unsorted",
+      text:"# Interview prep questions\n\nQuestions to screen candidates for product operations and workflow design:\n\n- Tell me about a time you had to turn vague direction into a repeatable process.\n- What signals tell you a system should be changed instead of patched?\n- How do you decide when to document versus automate?\n- Give an example of a handoff you improved across teams.\n\nNotes:\n- This is for recruiting next month.\n- We do not have a dedicated hiring area yet."
     },
     {
-      label:"Postmortem -> reference",
-      text:"# Postmortem - Checkout Outage, 2026-06-18\n\nStatus: RESOLVED. Writing this up so we do not repeat it next quarter.\n\n## What happened\nCheckout was down for 22 minutes after a bad config push removed a required env var.\n\n## Root cause\nNo validation on the config pipeline; the missing var only failed at request time.\n\n## What we are keeping for next time\n- Add a config schema check in CI (ticket filed).\n- The rollback took too long because nobody knew the runbook - link it in the on-call doc.\n- Re-read this before the next big config change."
+      label:"Pricing rewrite -> drafts (+ideas)",
+      text:"# Pricing rewrite\n\nDrafting the new pricing page copy for launch.\n\nCurrent draft sections:\n- Hero: simpler value statement\n- Tier table: Starter / Pro / Team\n- FAQ: billing and annual discount\n\nOpen thought while drafting:\n- maybe add usage-based tiers later if activation continues climbing\n\nThis is still writing-in-progress, not final copy."
+    },
+    {
+      label:"Evolved side-tool -> active-projects",
+      text:"# Side tool concept\n\nOriginally parked as an idea last month.\n\nNow in progress:\n- Project repo initialized\n- Basic ingestion pipeline running locally\n- First integration test passing\n\nNext:\n- Add error reporting\n- Ship internal alpha by end of sprint\n\nThis has moved from someday-maybe into active build work."
     }
   ];
 
