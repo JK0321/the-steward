@@ -175,11 +175,22 @@
   .chip{font-family:var(--mono);font-size:11.5px;color:var(--muted);background:#10151c;
     border:1px solid var(--line-soft);border-radius:20px;padding:5px 12px;cursor:pointer;transition:.15s}
   .chip:hover{border-color:var(--amber-dim);color:var(--text)}
-  .example-links{margin:0 0 10px;padding:9px 11px;border:1px solid var(--line-soft);
-    border-radius:8px;background:#10151c;font-size:12px;color:var(--muted);line-height:1.45}
-  .example-links b{color:var(--text);font-weight:600}
-  .example-links a{color:var(--amber);text-decoration:none}
-  .example-links a:hover{text-decoration:underline}
+  .side-examples{margin:0 0 14px;padding:11px;border:1px solid var(--line-soft);border-radius:9px;background:#10151c}
+  .side-title{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2)}
+  .side-sub{margin:7px 0 10px;font-size:12px;color:var(--muted);line-height:1.45}
+  .side-block{border-top:1px solid var(--line-soft);padding-top:9px;margin-top:9px}
+  .side-label{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:8px}
+  .sample-file-list,.sample-text-list{display:grid;gap:8px}
+  .sample-file{border:1px dashed var(--line);border-radius:8px;padding:8px;background:#0e1319;cursor:grab}
+  .sample-file:active{cursor:grabbing}
+  .sample-file .name{font-family:var(--mono);font-size:11.5px;color:var(--text)}
+  .sample-file .meta{font-size:11px;color:var(--muted);margin-top:4px}
+  .sample-file .actions{margin-top:7px;display:flex;gap:7px}
+  .sample-file .actions .btn{font-size:11px;padding:5px 9px}
+  .sample-text{border:1px solid var(--line);border-radius:8px;padding:8px;background:#0e1319}
+  .sample-text pre{margin:0 0 7px;font-family:var(--mono);font-size:11px;line-height:1.4;color:#b7c0cf;white-space:pre-wrap}
+  .sample-text .actions{display:flex;gap:7px}
+  .sample-text .actions .btn{font-size:11px;padding:5px 9px}
   .demo-input{width:100%;min-height:158px;resize:vertical;font-family:var(--mono);font-size:12.5px;
     line-height:1.6;color:var(--text);background:#10151c;border:1px solid var(--line);
     border-radius:10px;padding:13px 14px;outline:none}
@@ -289,23 +300,24 @@
     </div>
     <div class="demo-grid">
       <div class="demo-left">
-        <div class="example-links">
-          <b>Example inputs:</b>
-          <a href="reference/demo-input-text-examples.txt" target="_blank" rel="noopener">copy/paste text</a>
-          ·
-          drag/drop .md files:
-          <a href="reference/demo-input-files/standup-log-example.md" target="_blank" rel="noopener">standup</a>
-          |
-          <a href="reference/demo-input-files/onboarding-draft-example.md" target="_blank" rel="noopener">draft</a>
-          |
-          <a href="reference/demo-input-files/idea-voice-capture-example.md" target="_blank" rel="noopener">idea</a>
-        </div>
         <div class="chips" id="samples"></div>
         <textarea id="demoText" class="demo-input" placeholder="Paste or type a note…  (e.g. a standup log, a recipe, a draft, an idea)"></textarea>
         <button class="btn primary" id="routeBtn">Route it →</button>
         <p class="route-desc">Converts the note to <b>.md</b>, stamps it, and shows which area's <b>00-inbox/</b> it lands in — all in your browser, nothing uploaded.</p>
       </div>
       <div class="demo-right">
+        <div class="side-examples">
+          <div class="side-title">Examples On The Side</div>
+          <div class="side-sub">Drag a sample .md card to the drop zone above, or copy/use sample text into the routing field.</div>
+          <div class="side-block">
+            <div class="side-label">Drag sample .md files</div>
+            <div class="sample-file-list" id="dragSamples"></div>
+          </div>
+          <div class="side-block">
+            <div class="side-label">Copy or use sample text</div>
+            <div class="sample-text-list" id="textSamples"></div>
+          </div>
+        </div>
         <div class="tree-label">workspace / areas /</div>
         <div class="tree" id="tree"></div>
       </div>
@@ -343,6 +355,23 @@
   const queueEl=$("queue"), emptyEl=$("empty"), benchEl=$("bench");
   const dlAll=$("dlall"), clearBtn=$("clear");
   const previewEl=$("preview"), pvFile=$("pvFile"), pvRaw=$("pvRaw"), pvMd=$("pvMd");
+  const DRAG_SAMPLES = [
+    {
+      name:"standup-log-example.md",
+      text:"# Standup - Jun 24\n\n- Finished auth refactor.\n- Starting nav redesign today.\n- Next standup Thursday.\n",
+      expected:"logs/00-inbox/"
+    },
+    {
+      name:"onboarding-draft-example.md",
+      text:"# DRAFT: onboarding guide\n\nStatus: rough draft, not published.\nNeed to tighten intro and add screenshots.\n",
+      expected:"drafts/00-inbox/"
+    },
+    {
+      name:"idea-voice-capture-example.md",
+      text:"# Idea: voice capture for quick notes\n\nWhat if the app could accept voice snippets and auto-transcribe?\nNot committed. Just parking the thought.\n",
+      expected:"ideas/00-inbox/"
+    }
+  ];
 
   // ---- helpers -------------------------------------------------------------
   const ext = n => (n.split(".").pop()||"").toLowerCase();
@@ -650,6 +679,51 @@
   }
 
   // ---- intake --------------------------------------------------------------
+  function makeSampleFile(sample){
+    try { return new File([sample.text], sample.name, {type:"text/markdown"}); }
+    catch(_){
+      const b = new Blob([sample.text], {type:"text/markdown"});
+      b.name = sample.name;
+      return b;
+    }
+  }
+  function initDragSamples(){
+    const host = $("dragSamples");
+    if(!host) return;
+    host.innerHTML = DRAG_SAMPLES.map((s,i)=>
+      '<div class="sample-file" draggable="true" data-i="'+i+'">'+
+        '<div class="name">'+s.name+'</div>'+
+        '<div class="meta">expected: '+s.expected+'</div>'+
+        '<div class="actions">'+
+          '<button class="btn ghost" data-add="'+i+'" type="button">Add to bench</button>'+
+          '<button class="btn ghost" data-dl="'+i+'" type="button">Download</button>'+
+        '</div>'+
+      '</div>'
+    ).join("");
+
+    host.addEventListener("dragstart", e=>{
+      const card = e.target.closest(".sample-file[data-i]");
+      if(!card) return;
+      const i = card.getAttribute("data-i");
+      e.dataTransfer.setData("text/x-steward-sample-index", i);
+      e.dataTransfer.effectAllowed = "copy";
+    });
+
+    host.addEventListener("click", e=>{
+      const add = e.target.closest("button[data-add]");
+      if(add){
+        const s = DRAG_SAMPLES[+add.getAttribute("data-add")];
+        if(s) addFiles([makeSampleFile(s)]);
+        return;
+      }
+      const dl = e.target.closest("button[data-dl]");
+      if(dl){
+        const s = DRAG_SAMPLES[+dl.getAttribute("data-dl")];
+        if(s) saveBlob(new Blob([s.text],{type:"text/markdown"}), s.name);
+      }
+    });
+  }
+
   function addFiles(fileList){
     [...fileList].forEach(f=> items.push({file:f, name:f.name, status:"wait"}));
     render(); run();
@@ -663,7 +737,14 @@
   ;["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{
     e.preventDefault(); if(ev==="drop"||!drop.contains(e.relatedTarget)) drop.classList.remove("drag");
   }));
-  drop.addEventListener("drop",e=>{ if(e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
+  drop.addEventListener("drop",e=>{
+    if(e.dataTransfer.files.length){ addFiles(e.dataTransfer.files); return; }
+    const sampleIdx = e.dataTransfer.getData("text/x-steward-sample-index");
+    if(sampleIdx!==""){
+      const s = DRAG_SAMPLES[+sampleIdx];
+      if(s) addFiles([makeSampleFile(s)]);
+    }
+  });
 
   // ---- controls ------------------------------------------------------------
   dlAll.addEventListener("click",downloadAll);
@@ -688,6 +769,7 @@
   });
 
   render();
+  initDragSamples();
 })();
 </script>
 
@@ -698,6 +780,16 @@
   const $ = id => document.getElementById(id);
   const AREAS = ["active-projects","ideas","reference","drafts","logs","archive","_unsorted"];
   const tree=$("tree"), demoOut=$("demoOut"), reasonEl=$("reason"), demoMd=$("demoMd"), demoText=$("demoText");
+  const TEXT_SAMPLES = [
+    {
+      label:"Standup -> logs",
+      text:"# Standup - Jun 24\n\n- Finished auth refactor.\n- Starting nav redesign today.\n- Next standup Thursday."
+    },
+    {
+      label:"Draft -> drafts",
+      text:"# DRAFT: onboarding guide\n\nStatus: rough draft, not published.\nNeed to tighten intro and add screenshots."
+    }
+  ];
 
   const SAMPLES = [
     {label:"Dated standup", text:
@@ -840,8 +932,44 @@ Re-read this before the next big config change.`}
   // expose the routing core so the converter queue can route a dropped file
   window.Steward = { route, buildMd, slug, showRouting };
 
+  function initTextSamples(){
+    const host = $("textSamples");
+    if(!host) return;
+    host.innerHTML = TEXT_SAMPLES.map((s,i)=>
+      '<div class="sample-text">'+
+        '<pre>'+s.text.replace(/</g,"&lt;")+'</pre>'+
+        '<div class="actions">'+
+          '<button class="btn ghost" type="button" data-copy="'+i+'">Copy</button>'+
+          '<button class="btn ghost" type="button" data-use="'+i+'">Use</button>'+
+        '</div>'+
+      '</div>'
+    ).join("");
+
+    host.addEventListener("click", async e=>{
+      const copyBtn = e.target.closest("button[data-copy]");
+      if(copyBtn){
+        const s = TEXT_SAMPLES[+copyBtn.getAttribute("data-copy")];
+        if(!s) return;
+        try {
+          await navigator.clipboard.writeText(s.text);
+          copyBtn.textContent = "Copied";
+          setTimeout(()=>copyBtn.textContent="Copy", 1000);
+        } catch(_) {}
+        return;
+      }
+      const useBtn = e.target.closest("button[data-use]");
+      if(useBtn){
+        const s = TEXT_SAMPLES[+useBtn.getAttribute("data-use")];
+        if(!s) return;
+        demoText.value = s.text;
+        go();
+      }
+    });
+  }
+
   // initial empty tree + sample chips
   renderTree({area:null}, null);
+  initTextSamples();
   $("samples").innerHTML = SAMPLES.map((s,i)=>'<span class="chip" data-i="'+i+'">'+s.label+'</span>').join("");
   $("samples").addEventListener("click",e=>{
     const c=e.target.closest(".chip"); if(!c) return;
