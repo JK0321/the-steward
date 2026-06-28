@@ -97,17 +97,6 @@
   .btn.primary:hover{background:#f0b65e}
   .btn.ghost{background:transparent}
 
-  /* explicit markdown examples for drag/drop */
-  .md-examples{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#10151c}
-  .md-examples .lead{font-size:12.5px;color:var(--muted);margin:0 0 12px}
-  .md-example-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media(max-width:720px){.md-example-grid{grid-template-columns:1fr}}
-  .md-card{border:1px solid var(--line-soft);border-radius:9px;padding:11px;background:var(--panel)}
-  .md-card .name{font-family:var(--mono);font-size:12px;color:var(--text)}
-  .md-card .hint{font-size:12px;color:var(--muted);margin:6px 0 10px}
-  .md-actions{display:flex;gap:8px;flex-wrap:wrap}
-  .btn.tiny{font-family:var(--mono);font-size:11.5px;padding:6px 10px}
-
   /* Queue */
   .queue{margin-top:22px;display:flex;flex-direction:column;gap:1px;
     border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--line-soft)}
@@ -186,12 +175,6 @@
   .chip{font-family:var(--mono);font-size:11.5px;color:var(--muted);background:#10151c;
     border:1px solid var(--line-soft);border-radius:20px;padding:5px 12px;cursor:pointer;transition:.15s}
   .chip:hover{border-color:var(--amber-dim);color:var(--text)}
-  .paste-examples{margin:0 0 12px;display:grid;grid-template-columns:1fr;gap:8px}
-  .paste-card{border:1px solid var(--line-soft);border-radius:8px;background:#10151c;padding:9px 10px}
-  .paste-meta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:7px}
-  .paste-actions{display:flex;gap:8px;flex-wrap:wrap}
-  .paste-actions .btn{font-size:11.5px;padding:6px 10px}
-  .paste-snippet{margin:0 0 8px;font-family:var(--mono);font-size:11.5px;line-height:1.45;color:#b7c0cf;white-space:pre-wrap}
   .demo-input{width:100%;min-height:158px;resize:vertical;font-family:var(--mono);font-size:12.5px;
     line-height:1.6;color:var(--text);background:#10151c;border:1px solid var(--line);
     border-radius:10px;padding:13px 14px;outline:none}
@@ -276,11 +259,6 @@
     </div>
   </section>
 
-  <section class="md-examples" id="mdExamples">
-    <p class="lead">No files handy? Download one of these <b>.md</b> examples, drag it onto the bench, then click <b>Route</b> to see where it lands.</p>
-    <div class="md-example-grid" id="mdExampleGrid"></div>
-  </section>
-
   <div class="queue" id="queue">
     <div class="empty" id="empty">No files yet — drop something on the bench above.</div>
   </div>
@@ -306,7 +284,6 @@
     </div>
     <div class="demo-grid">
       <div class="demo-left">
-        <div class="paste-examples" id="pasteExamples"></div>
         <div class="chips" id="samples"></div>
         <textarea id="demoText" class="demo-input" placeholder="Paste or type a note…  (e.g. a standup log, a recipe, a draft, an idea)"></textarea>
         <button class="btn primary" id="routeBtn">Route it →</button>
@@ -350,29 +327,6 @@
   const queueEl=$("queue"), emptyEl=$("empty"), benchEl=$("bench");
   const dlAll=$("dlall"), clearBtn=$("clear");
   const previewEl=$("preview"), pvFile=$("pvFile"), pvRaw=$("pvRaw"), pvMd=$("pvMd");
-  const MD_EXAMPLES = [
-    {
-      name:"example-standup-log.md",
-      target:"logs/00-inbox/",
-      text:
-`# Standup notes - Jun 24
-
-- Finished auth refactor.
-- Starting nav redesign today.
-- Next standup Thursday.
-`
-    },
-    {
-      name:"example-onboarding-draft.md",
-      target:"drafts/00-inbox/",
-      text:
-`# DRAFT: New user onboarding guide
-
-Status: rough draft, not published.
-Need to tighten intro and add screenshots.
-`
-    }
-  ];
 
   // ---- helpers -------------------------------------------------------------
   const ext = n => (n.split(".").pop()||"").toLowerCase();
@@ -664,42 +618,6 @@ Need to tighten intro and add screenshots.
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),1500);
   }
-  function buildExampleFile(ex){
-    try { return new File([ex.text], ex.name, {type:"text/markdown"}); }
-    catch(_){
-      const b = new Blob([ex.text], {type:"text/markdown"});
-      b.name = ex.name;
-      return b;
-    }
-  }
-  function initMdExamples(){
-    const host = $("mdExampleGrid");
-    if(!host) return;
-    host.innerHTML = MD_EXAMPLES.map((ex,i)=>
-      '<div class="md-card">'+
-        '<div class="name">'+ex.name+'</div>'+
-        '<div class="hint">Expected route: <b>'+ex.target+'</b></div>'+
-        '<div class="md-actions">'+
-          '<button class="btn tiny" data-action="download" data-i="'+i+'">Download .md</button>'+
-          '<button class="btn tiny" data-action="queue" data-i="'+i+'">Add to bench</button>'+
-          '<button class="btn tiny" data-action="copy" data-i="'+i+'">Copy text</button>'+
-        '</div>'+
-      '</div>'
-    ).join("");
-    host.addEventListener("click", async e=>{
-      const b = e.target.closest("button[data-action]");
-      if(!b) return;
-      const ex = MD_EXAMPLES[+b.dataset.i];
-      if(!ex) return;
-      const a = b.dataset.action;
-      if(a==="download") saveBlob(new Blob([ex.text],{type:"text/markdown"}), ex.name);
-      if(a==="queue") addFiles([buildExampleFile(ex)]);
-      if(a==="copy"){
-        try{ await navigator.clipboard.writeText(ex.text); b.textContent="Copied"; setTimeout(()=>b.textContent="Copy text",1200); }
-        catch(_){ /* ignore clipboard errors */ }
-      }
-    });
-  }
   function downloadOne(it){
     saveBlob(new Blob([it.md],{type:"text/markdown"}), stem(it.name)+".md");
   }
@@ -754,7 +672,6 @@ Need to tighten intro and add screenshots.
   });
 
   render();
-  initMdExamples();
 })();
 </script>
 
@@ -765,27 +682,6 @@ Need to tighten intro and add screenshots.
   const $ = id => document.getElementById(id);
   const AREAS = ["active-projects","ideas","reference","drafts","logs","archive","_unsorted"];
   const tree=$("tree"), demoOut=$("demoOut"), reasonEl=$("reason"), demoMd=$("demoMd"), demoText=$("demoText");
-  const PASTE_EXAMPLES = [
-    {
-      label:"Paste example: standup -> logs",
-      expected:"logs/00-inbox/",
-      text:
-`# Standup - Jun 24
-
-- Wrapped auth refactor.
-- Starting nav redesign today.
-- Next standup Thursday.`
-    },
-    {
-      label:"Paste example: draft -> drafts",
-      expected:"drafts/00-inbox/",
-      text:
-`# DRAFT: onboarding guide
-
-Status: rough draft, not published.
-Need to tighten intro and add screenshots.`
-    }
-  ];
 
   const SAMPLES = [
     {label:"Dated standup", text:
@@ -928,42 +824,8 @@ Re-read this before the next big config change.`}
   // expose the routing core so the converter queue can route a dropped file
   window.Steward = { route, buildMd, slug, showRouting };
 
-  function renderPasteExamples(){
-    const host = $("pasteExamples");
-    if(!host) return;
-    host.innerHTML = PASTE_EXAMPLES.map((ex,i)=>
-      '<div class="paste-card">'+
-        '<div class="paste-meta">'+ex.label+' · expected: <b>'+ex.expected+'</b></div>'+
-        '<pre class="paste-snippet">'+ex.text.replace(/</g,"&lt;")+'</pre>'+
-        '<div class="paste-actions">'+
-          '<button class="btn ghost" data-copy="'+i+'">Copy</button>'+
-          '<button class="btn" data-use="'+i+'">Use and route</button>'+
-        '</div>'+
-      '</div>'
-    ).join("");
-
-    host.addEventListener("click", async e=>{
-      const copyBtn = e.target.closest("button[data-copy]");
-      if(copyBtn){
-        const ex = PASTE_EXAMPLES[+copyBtn.dataset.copy];
-        if(!ex) return;
-        try{ await navigator.clipboard.writeText(ex.text); copyBtn.textContent="Copied"; setTimeout(()=>copyBtn.textContent="Copy",1200); }
-        catch(_){ /* ignore clipboard errors */ }
-        return;
-      }
-      const useBtn = e.target.closest("button[data-use]");
-      if(useBtn){
-        const ex = PASTE_EXAMPLES[+useBtn.dataset.use];
-        if(!ex) return;
-        demoText.value = ex.text;
-        go();
-      }
-    });
-  }
-
   // initial empty tree + sample chips
   renderTree({area:null}, null);
-  renderPasteExamples();
   $("samples").innerHTML = SAMPLES.map((s,i)=>'<span class="chip" data-i="'+i+'">'+s.label+'</span>').join("");
   $("samples").addEventListener("click",e=>{
     const c=e.target.closest(".chip"); if(!c) return;
