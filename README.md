@@ -1,5 +1,7 @@
 # The Steward
 
+[Live Webpage](https://jk0321.github.io/the-steward/)
+
 A folder-based operator that reads a heap of markdown files and drops each one into the **`00-inbox/` of the right area** — fast. It turns one paralyzing mountain of files into a handful of labeled, climbable piles. It **keeps everything**; the piles are folders.
 
 Its job is **partition, not perfection.** The output isn't a clean desk — it's an *organized mess:* each file staged in the right area's inbox, sorted *enough* that the real cleaning, when you do it, is easy. **Five labeled hills are climbable; one mountain isn't.**
