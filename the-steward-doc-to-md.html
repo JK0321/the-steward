@@ -185,6 +185,7 @@
   .sample-file:active{cursor:grabbing}
   .sample-file .name{font-family:var(--mono);font-size:11.5px;color:var(--text)}
   .sample-file .meta{font-size:11px;color:var(--muted);margin-top:4px}
+  .sample-file .drag-hint{font-size:11px;color:var(--amber);margin-top:4px}
   .sample-file .actions{margin-top:7px;display:flex;gap:7px}
   .sample-file .actions .btn{font-size:11px;padding:5px 9px}
   .sample-text{border:1px solid var(--line);border-radius:8px;padding:8px;background:#0e1319}
@@ -358,18 +359,23 @@
   const DRAG_SAMPLES = [
     {
       name:"standup-log-example.md",
-      text:"# Standup - Jun 24\n\n- Finished auth refactor.\n- Starting nav redesign today.\n- Next standup Thursday.\n",
+      text:"# Standup Notes - Jun 24\n\nQuick log from this morning's standup.\n\n- Me: finished the auth refactor, starting on the redesign nav today.\n- Priya: blocked on the API key, pinging infra.\n- Sam: QA on the checkout flow, found two bugs.\n\nNext standup Thursday.\n",
       expected:"logs/00-inbox/"
     },
     {
       name:"onboarding-draft-example.md",
-      text:"# DRAFT: onboarding guide\n\nStatus: rough draft, not published.\nNeed to tighten intro and add screenshots.\n",
+      text:"# Onboarding guide (draft)\n\nRough outline for the new-hire onboarding doc:\n1. Day 1 - accounts, tools, intro calls\n2. Week 1 - shadow a teammate, first small task\n3. Week 2 - own a piece end to end\n\nStill need to fill in the tools list and add screenshots.\n\n(Not now: could turn this into a short video series once the written version settles.)\n",
       expected:"drafts/00-inbox/"
     },
     {
       name:"idea-voice-capture-example.md",
-      text:"# Idea: voice capture for quick notes\n\nWhat if the app could accept voice snippets and auto-transcribe?\nNot committed. Just parking the thought.\n",
+      text:"# Idea: voice input capture\n\nWhat if the app had voice input for quick capture on mobile and desktop?\n\nPotential benefits:\n- Faster note capture during meetings\n- Better accessibility for users who avoid typing\n- Better capture quality when context is still fresh\n\nUnknowns:\n- Accuracy in noisy rooms\n- Privacy expectations for audio\n- Cost of transcription at scale\n\nNot committed yet. Parking this as a someday-maybe idea.\n",
       expected:"ideas/00-inbox/"
+    },
+    {
+      name:"checkout-outage-postmortem.md",
+      text:"# Postmortem - Checkout Outage, 2026-06-18\n\nStatus: RESOLVED. Writing this up so we do not repeat it next quarter.\n\n## What happened\nCheckout was down for 22 minutes after a bad config push removed a required env var.\n\n## Root cause\nNo validation on the config pipeline; the missing var only failed at request time.\n\n## What we are keeping for next time\n- Add a config schema check in CI (ticket filed).\n- The rollback took too long because nobody knew the runbook - link it in the on-call doc.\n- Re-read this before the next big config change.\n",
+      expected:"reference/00-inbox/"
     }
   ];
 
@@ -694,6 +700,7 @@
       '<div class="sample-file" draggable="true" data-i="'+i+'">'+
         '<div class="name">'+s.name+'</div>'+
         '<div class="meta">expected: '+s.expected+'</div>'+
+        '<div class="drag-hint">Drag this card to the drop zone above</div>'+
         '<div class="actions">'+
           '<button class="btn ghost" data-add="'+i+'" type="button">Add to bench</button>'+
           '<button class="btn ghost" data-dl="'+i+'" type="button">Download</button>'+
@@ -706,6 +713,7 @@
       if(!card) return;
       const i = card.getAttribute("data-i");
       e.dataTransfer.setData("text/x-steward-sample-index", i);
+      e.dataTransfer.setData("text/plain", "steward-sample:"+i);
       e.dataTransfer.effectAllowed = "copy";
     });
 
@@ -739,9 +747,14 @@
   }));
   drop.addEventListener("drop",e=>{
     if(e.dataTransfer.files.length){ addFiles(e.dataTransfer.files); return; }
-    const sampleIdx = e.dataTransfer.getData("text/x-steward-sample-index");
+    let sampleIdx = e.dataTransfer.getData("text/x-steward-sample-index");
+    if(sampleIdx===""){
+      const fallback = e.dataTransfer.getData("text/plain") || "";
+      const m = fallback.match(/^steward-sample:(\d+)$/);
+      if(m) sampleIdx = m[1];
+    }
     if(sampleIdx!==""){
-      const s = DRAG_SAMPLES[+sampleIdx];
+      const s = DRAG_SAMPLES[Number(sampleIdx)];
       if(s) addFiles([makeSampleFile(s)]);
     }
   });
@@ -783,11 +796,15 @@
   const TEXT_SAMPLES = [
     {
       label:"Standup -> logs",
-      text:"# Standup - Jun 24\n\n- Finished auth refactor.\n- Starting nav redesign today.\n- Next standup Thursday."
+      text:"# Standup Notes - Jun 24\n\nQuick log from this morning's standup.\n\n- Me: finished the auth refactor, starting on the redesign nav today.\n- Priya: blocked on the API key, pinging infra.\n- Sam: QA on the checkout flow, found two bugs.\n\nNext standup Thursday."
     },
     {
       label:"Draft -> drafts",
-      text:"# DRAFT: onboarding guide\n\nStatus: rough draft, not published.\nNeed to tighten intro and add screenshots."
+      text:"# Onboarding guide (draft)\n\nRough outline for the new-hire onboarding doc:\n1. Day 1 - accounts, tools, intro calls\n2. Week 1 - shadow a teammate, first small task\n3. Week 2 - own a piece end to end\n\nStill need to fill in the tools list and add screenshots.\n\n(Not now: could turn this into a short video series once the written version settles.)"
+    },
+    {
+      label:"Postmortem -> reference",
+      text:"# Postmortem - Checkout Outage, 2026-06-18\n\nStatus: RESOLVED. Writing this up so we do not repeat it next quarter.\n\n## What happened\nCheckout was down for 22 minutes after a bad config push removed a required env var.\n\n## Root cause\nNo validation on the config pipeline; the missing var only failed at request time.\n\n## What we are keeping for next time\n- Add a config schema check in CI (ticket filed).\n- The rollback took too long because nobody knew the runbook - link it in the on-call doc.\n- Re-read this before the next big config change."
     }
   ];
 
