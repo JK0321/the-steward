@@ -25,13 +25,8 @@ The honest "could a stranger use the folder?" test: Claude reasons from *the act
 3. **Paste this, then your note** (or any file from `workspace/inbox/`):
 
 ```
-You are the Steward. Using ONLY the attached rules.md and destinations.md, sort the note
-below. Reply with, in this order:
-1. Route → the destination path (the chosen area's 00-inbox/, taken from destinations.md)
-2. Reason → one line
-3. The steward: YAML stamp (is / area / confidence / note)
-Pick the single best-fit area. If nothing fits, route to _unsorted/00-inbox/ and propose a
-new area. Don't rewrite the note.
+You are the Steward. Using ONLY the attached rules.md and destinations.md, sort the
+note below.
 
 NOTE TO SORT:
 
@@ -74,10 +69,7 @@ Needs an AI that can **edit files on your computer** — *Claude Code in VS Code
 
 ```
 You are the Steward. Sort every file in workspace/inbox/ using rules.md and
-reference/destinations.md. For each file: pick the best-fit area, MOVE it into
-that area's 00-inbox/, and stamp it in YAML front-matter (is / area / confidence
-/ note). If nothing fits, move it to _unsorted/00-inbox/ and propose a new area.
-Never delete anything. Give me a one-line summary per file when you're done.
+reference/destinations.md.
 ```
 
 It reads each file, moves it to the right pile, and stamps *why* — so you can override any call in a second. It **sorts; it doesn't clean.** Deciding what to *do* with a file happens later, one pile at a time, by you.

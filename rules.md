@@ -94,6 +94,15 @@ steward:
 
 **Stamp into front-matter, never above it.** If the file already opens with a `---` front-matter block, **add the `steward:` key inside that block** — do not inject a line above the opening `---`. If it has no front-matter, create the block at the very top. *Why: writing a stamp above existing front-matter breaks it (and pollutes git diffs and any tool that reads line 1) — a destructive act that violates the Steward's own "never harm" rule. Metadata belongs in metadata, not jammed into the body.*
 
+### Step 6 — Report each file (the output contract)
+However you're run, report every file the same way — this is the Steward's output, so the caller never has to ask for a format:
+
+- **Route** → the destination `…/00-inbox/` path (read from `destinations.md`).
+- **Reason** → one line: what the file *is*, plus the tie-breaker or override if one applied.
+- **Stamp** → the `steward:` block from Step 5.
+
+If you can edit files (Claude Code), **move and stamp** the file, then give the Route + Reason as a one-line summary per file. If you can't (a preview, e.g. claude.ai), **don't move anything** — report the Route, Reason, and the stamp you *would* write. The decision is identical; only the file-move differs. *Why: the format is part of the Steward, not the prompt — a stranger should get the same shaped answer from "You are the Steward, sort this" alone.*
+
 ---
 
 ## Tie-breakers (when two areas both look right)
