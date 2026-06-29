@@ -1,5 +1,9 @@
 # Cold Test Record — The Steward
 
+> **New here? You can skip this file.** It's not part of using the Steward — for that, start at the
+> `README.md` or `DEMO.md`. This is an **evidence doc for a reviewer**: the record of the Steward
+> being tested on files it had never seen, to show it sorts correctly with no prior context.
+
 > ✅ **COLD PASS achieved.** The WARM run below was the initial pass; it is **superseded** by the zero-context *Fresh-Session* and *External (claude.ai)* cold runs documented further down (see **Status**). Skim those for the Cat-11 evidence.
 
 **Protocol:** 6 unseen markdown files dropped in `workspace/inbox/`. Expected area
@@ -166,6 +170,10 @@ in a true external setting — not just in-repo subagents that might share envir
 Two independent cold tests now agree. This is a production-ready cold-test artifact answering
 the "could a stranger use it?" judging criterion directly. No open refinements block
 submission; the measuring stick (every file in a defensible area, heap empty) was met in both.
+
+> **Override also proven.** The business-impact override (Step 4.5 / `reference/stakes.md`) has its
+> own external cold pass — 4/4, including a cold-pile re-route and a no-fire control — recorded in
+> `reference/proof/stakes-cold-test.md` (2026-06-29).
 
 ---
 

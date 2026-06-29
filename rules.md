@@ -31,6 +31,12 @@ For each file in inbox/ —
         └─ NO clear fit ─► _unsorted/  +  propose a new area
         │
         ▼
+  Live external stake? (a deadline / money / someone waiting)
+        └─ YES ─► surface it: priority: high + name the stake;
+                  if the area is a cold pile (archive/ideas/_unsorted),
+                  re-route to active-projects so it can't rot past its clock
+        │
+        ▼
   Move it → stamp it   (steward: block in the file's frontmatter)
 ```
 
@@ -61,6 +67,14 @@ Never jam a file into an area it doesn't fit just to avoid `_unsorted`. A parked
 ### Step 4 — Touches more than one area? Route to the dominant one
 If a file spans two areas, send it to the **one it's most about**, and note the secondary in the stamp (`touches X too`). Do **not** split it, copy it, or stall on the tie. *Why: organized mess tolerates a file living in its best home with a note; precision here is wasted motion.*
 
+### Step 4.5 — Stakes check (surface, don't bury)
+Before you place the file, check it against `reference/stakes.md` for a **live external stake** — an observable deadline (S1), money/legal/compliance consequence (S2), or someone waiting on it (S3). This is the **one** time business impact overrides the by-what-it-is sort, and it changes *routing*, not the action you take.
+
+- **No stake visible?** Skip this step — place the file by what it is (Steps 2–4).
+- **A stake fires?** Stamp `priority: high` and name it (`stake: <what + when>`), and **list the file in the run summary's `⚠ Surfaced` block.** If the by-what-it-is area is a *cold pile* (`archive`, `ideas`, `_unsorted`), **re-route to `active-projects/00-inbox/`** instead and stamp `note: surfaced from <area> — live stake`. If it already routes to a live pile (`active-projects`, `drafts`, `logs`), keep the area and just add the priority stamp.
+
+*Why: a "keep everything, clean later" sorter has one real failure — a clock-bearing file rots in a pile you never reopen. This is the narrow, observable exception that stops that, without turning the Steward into a decider. See `reference/stakes.md`.*
+
 ### Step 5 — Move it and stamp it
 Move the file into the chosen area's `00-inbox/` and write the stamp as a `steward:` block in the file's **YAML front-matter**:
 
@@ -70,9 +84,13 @@ steward:
   is: <what the file is, in a phrase>
   area: <area name>
   confidence: <clear | low>
-  note: <proposed-new-area | touches X too | evolved from Y | —>
+  priority: <high>            # OPTIONAL — only when the stakes override (Step 4.5) fires
+  stake: <what + when>        # OPTIONAL — names the live stake; present only with priority
+  note: <proposed-new-area | touches X too | evolved from Y | surfaced from Z — live stake | —>
 ---
 ```
+
+`priority` and `stake` appear **only** when Step 4.5 fires; omit both on an ordinary sort.
 
 **Stamp into front-matter, never above it.** If the file already opens with a `---` front-matter block, **add the `steward:` key inside that block** — do not inject a line above the opening `---`. If it has no front-matter, create the block at the very top. *Why: writing a stamp above existing front-matter breaks it (and pollutes git diffs and any tool that reads line 1) — a destructive act that violates the Steward's own "never harm" rule. Metadata belongs in metadata, not jammed into the body.*
 
@@ -111,6 +129,7 @@ On a later run, if a file's nature has changed — a loose note became an active
 - It will **not decide what to *do*** with a file (act / keep / toss) — that's the later, per-area cleaning.
 - It will **not force a bad fit** — it parks in `_unsorted/` and proposes an area instead.
 - It will **not clean the destination inboxes** — it fills them; each area cleans its own.
+- It will **not hand the call back** — never "where does this go?", "what do you want me to do with this?", "should I keep this?", or "I'll leave this one for you." **Asking is stalling.** When unsure, it does the defined thing: best fit, or `_unsorted/` with a proposed area.
 
 ---
 

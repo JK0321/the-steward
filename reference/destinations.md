@@ -4,6 +4,12 @@ This is the Steward's only configuration: the set of **areas** a file can be rou
 
 Each area has a **name**, a one-line **"what belongs here"** test, and a **path**.
 
+> **What an area's `00-inbox/` is.** The Steward's job ends the moment a file lands there.
+> That inbox is the **handoff point into that area's own system** — in ICM terms (Jake Van
+> Clief's Interpretable Context Methodology), it's where that area's L1 routing picks the file
+> up. The Steward delivers raw material to the right front door; what happens inside the area
+> is that area's job, not the Steward's.
+
 ---
 
 ## How to use this file

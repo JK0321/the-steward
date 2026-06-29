@@ -6,6 +6,13 @@
 
 Its job is **partition, not perfection.** A roughly-right area reached fast beats a perfect home reached slowly. The output is an **organized mess** — each file routed to the right area's inbox, sorted *enough* that the real cleaning, when you do it, is easy — not a spotless desk.
 
+**Where it sits — upstream of your system, not inside it.** The Steward is the *intake
+operator* for an ICM-structured OS (Jake Van Clief's Interpretable Context Methodology):
+each destination area is its own L0–L4 context space, and the Steward's only job is to get
+each file to the right area's front door (`00-inbox/`, that area's L1 pickup). It is **not a
+layer of ICM** and does not organize a file's internals — it routes *which* ICM system a
+file belongs to. This is "folders as memory," sorted at the door.
+
 ## The point of view — what it refuses
 
 Most tools make you decide what to *do* with every file before you're allowed to file it.
@@ -87,9 +94,13 @@ steward:
   is: <what the file is, in a phrase>
   area: <area name>
   confidence: <clear | low>
-  note: <proposed-new-area | touches X too | evolved from Y | —>
+  priority: <high>            # optional — only when a live stake fires (see reference/stakes.md)
+  stake: <what + when>        # optional — names the stake; present only with priority
+  note: <proposed-new-area | touches X too | evolved from Y | surfaced from Z — live stake | —>
 ---
 ```
+
+`priority` and `stake` appear **only** when the stakes override fires — a file carrying a live deadline, a money/legal consequence, or someone waiting on it gets surfaced so it can't rot in a cold pile past its clock. Ordinary sorts omit both. See `reference/stakes.md`.
 
 Proposed new areas are surfaced in `_unsorted/00-inbox/` and the run summary, so you can accept or rename them.
 

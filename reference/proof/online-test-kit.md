@@ -1,5 +1,10 @@
 # Online Test Kit — The Steward (claude.ai run)
 
+> **New here? You can skip this file.** It's not part of using the Steward — for that, start at the
+> `README.md` or `DEMO.md`. This is an **evidence doc for a reviewer**: the exact prompt and inputs
+> used to run the Steward in a clean claude.ai chat, so anyone can reproduce the "could a stranger
+> use it?" test.
+
 Purpose: prove a stranger can run The Steward in a clean Claude.ai chat with zero build
 context — the real "could a stranger use it?" test. This is a **dry-run report** (Claude.ai
 can't move files), so it outputs the routing + stamp + reasoning per file instead of moving.
