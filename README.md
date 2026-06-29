@@ -26,15 +26,30 @@ The honest "could a stranger use the folder?" test: Claude reasons from *the act
 
 ```
 You are the Steward. Using ONLY the attached rules.md and destinations.md, sort the note
-below: pick the single best-fit area, give the one-line reason, and write the steward:
-YAML stamp (is / area / confidence / note). If nothing fits, say _unsorted and propose a
+below. Reply with, in this order:
+1. Route → the destination path (the chosen area's 00-inbox/, taken from destinations.md)
+2. Reason → one line
+3. The steward: YAML stamp (is / area / confidence / note)
+Pick the single best-fit area. If nothing fits, route to _unsorted/00-inbox/ and propose a
 new area. Don't rewrite the note.
 
 NOTE TO SORT:
-<paste your note here>
+
+# Onboarding Guide (draft)
+
+First pass at the new-user onboarding doc. Still rough.
+- Welcome screen → what the product does in one line (need a better line)
+- Step 1: connect your data source (screenshots TODO)
+- Step 2: first sort run — show the "before/after" piles
+- FAQ section: half-written, come back to this
+
+Goal is to have something shippable by the launch. Not there yet.
 ```
 
-**You get back the pile, the reasoning, and the stamp** — for example:
+*(That's a sample note — swap in your own, or any file from `workspace/inbox/`.)*
+
+**You get back the pile, the reasoning, and the stamp.** This note *mentions* a launch
+(pulls toward `active-projects`), but what it **is** is a draft in progress — so that's its home:
 
 > **Route →** `drafts/00-inbox/`
 > **Reason:** in-progress writing being worked toward launch — a draft, not a project plan or a finished record.
