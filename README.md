@@ -84,7 +84,7 @@ It reads each file, moves it to the right pile, and stamps *why* — so you can 
 
 ### 3. See it instantly — no AI, no download
 
-No claude.ai account handy? Open **`the-steward-doc-to-md.html`** in any browser, type or paste a note (or pick a sample), and hit **Route it →**. The page runs the Steward's rules and tie-breakers right in the page and shows the pile, the reasoning, and the stamp — a self-contained preview (the live, judgment-based sort still happens in Claude, options 1 and 2).
+No claude.ai account handy? **[Open the intake bench in your browser](https://jk0321.github.io/the-steward/the-steward-doc-to-md.html)** (or open `the-steward-doc-to-md.html` from the repo locally) — type or paste a note (or pick a sample), and hit **Route it →**. The page runs the Steward's rules and tie-breakers right in the page and shows the pile, the reasoning, and the stamp — a self-contained preview (the live, judgment-based sort still happens in Claude, options 1 and 2).
 
 ---
 
@@ -92,44 +92,55 @@ No claude.ai account handy? Open **`the-steward-doc-to-md.html`** in any browser
 
 ```
 the-steward/
+├── CLAUDE.md                  boot file — who the Steward is + load order (start here if you're Claude)
 ├── brief.md · identity.md · rules.md · examples.md   the spec
+├── DEMO.md                    run it in 2 minutes — paste-ready test + pass criteria
 ├── the-steward.html           the landing page — problem, point of view, how it sorts, proof
-├── the-steward-doc-to-md.html             the intake bench — convert docs→md + routing demo (browser, no install)
-├── reference/destinations.md     the area map — YOU edit this (area → folder whose 00-inbox receives the file)
+├── the-steward-doc-to-md.html the intake bench — convert docs→md + routing demo (browser, no install)
+├── reference/
+│   ├── destinations.md        the area map — YOU edit this (area → folder whose 00-inbox receives the file)
+│   ├── stakes.md              the one override — surface a file with a live deadline, don't bury it
+│   └── proof/                 reviewer evidence — cold-test records (skippable if you're just using it)
 └── workspace/
-    ├── inbox/                     drop the unsorted heap here
-    └── areas/                     destination areas (example set — repoint to your real folders)
+    ├── inbox/                  drop the unsorted heap here
+    └── areas/                  destination areas (example set — repoint to your real folders)
         ├── active-projects/00-inbox/
         ├── ideas/00-inbox/
         ├── reference/00-inbox/
         ├── drafts/00-inbox/
-        ├── logs/00-inbox/         time-stamped, transient entries (standup/meeting notes, journals)
+        ├── logs/00-inbox/      time-stamped, transient entries (standup/meeting notes, journals)
         ├── archive/00-inbox/
-        └── _unsorted/00-inbox/    no clear fit lands here + a new area is proposed
+        └── _unsorted/00-inbox/ no clear fit lands here + a new area is proposed
 ```
 
 ---
 
 ## The intake bench (companion web tool)
 
-`the-steward-doc-to-md.html` is a self-contained, browser-only front door — **open it, no install, nothing uploaded.** It does two jobs:
+The intake bench ([open it live](https://jk0321.github.io/the-steward/the-steward-doc-to-md.html), or `the-steward-doc-to-md.html` from the repo) is a self-contained, browser-only front door — **no install, nothing uploaded.** It does two jobs:
 
 - **Converts docs to markdown.** Drop a `.pdf`, `.docx`, `.xlsx`, `.csv`, `.pptx`, `.html`, or an image (OCR) and get clean `.md` with a metadata header — this is how non-markdown files become Steward-ready input.
 - **Shows the sort, live.** Type or paste a note (or pick a sample) and hit **Route it →**: the file converts to `.md`, gets its `steward:` stamp, and lands in the right area's `00-inbox/` in a folder tree, with the reasoning shown. Every converted file also gets its own **Route** button that runs the same sort.
 
 The in-browser router is a **deterministic preview** — it mirrors the Steward's rules and tie-breakers so you can *see* the sort happen offline. The live, judgment-based sort runs in **Claude** (the real engine, which handles the ambiguous cases rules alone can't). The bench is the front door; Claude does the thinking.
 
-> **Open:** `the-steward.html` (landing) → `the-steward-doc-to-md.html` (intake bench) in any browser.
+> Because most source material isn't markdown yet, the bench doubles as the **intake door
+> to an md-based (ICM) OS**: it makes non-markdown documents Steward-ready, then shows the
+> same sort. A convenience at the threshold — not a second product.
+
+> **Open:** [the landing page](https://jk0321.github.io/the-steward/) → [the intake bench](https://jk0321.github.io/the-steward/the-steward-doc-to-md.html) in any browser.
 
 ---
 
-## The five-step sort (the whole method)
+## The five-step sort (and the one override)
 
 1. **Read it fast** — skim what it *is* and what it's *about*. No deep-reading.
 2. **Match it to an area** (from `destinations.md`) — first clear fit wins.
 3. **No clear fit?** Route to `_unsorted/00-inbox/` and **propose a new area** — never force, never discard.
 4. **Touches two areas?** Route to the dominant one, note the other. Don't split.
 5. **Move it and stamp it.**
+
+**The one override — live stakes.** Between matching and moving, the Steward checks for a *live stake*: a deadline, a money/legal consequence, or someone waiting on the file. If one fires, the file gets `priority: high` — and if it would land in a cold pile (`archive`/`ideas`/`_unsorted`), it's routed to `active-projects` instead, so the thing with a clock on it can't rot unseen. This is the **one** time stakes override the by-what-it-is sort. *(See `reference/stakes.md`.)*
 
 Stamp written into the file's **YAML front-matter** (merged in, never injected above existing front-matter — the body is never touched):
 ```yaml
@@ -138,7 +149,9 @@ steward:
   is: <what the file is>
   area: <area name>
   confidence: <clear | low>
-  note: <proposed-new-area | touches X too | evolved from Y | —>
+  priority: <high>            # optional — only when a live stake fires (reference/stakes.md)
+  stake: <what + when>        # optional — names the stake; present only with priority
+  note: <proposed-new-area | touches X too | evolved from Y | surfaced from Z — live stake | —>
 ---
 ```
 
